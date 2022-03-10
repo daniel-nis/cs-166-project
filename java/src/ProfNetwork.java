@@ -275,7 +275,7 @@ public class ProfNetwork {
                 System.out.println("9. Log out");
                 switch (readChoice()){
                    case 1: FriendList(esql); break;
-                   case 2: UpdateProfile(esql); break;
+                   case 2: UpdateProfile(esql, authorisedUser); break;
                    case 3: NewMessage(esql); break;
                    case 4: SendRequest(esql); break;
                    case 9: usermenu = false; break;
@@ -373,15 +373,46 @@ public class ProfNetwork {
    }//end
 
 // Rest of the functions definition go in here
+
+    // FriendList - shows a user's friends list
     public static void FriendList(ProfNetwork esql){
 
     }
-    public static void UpdateProfile(ProfNetwork esql){
-        
+    
+    // UpdateProfile - changes a user's password
+    public static void UpdateProfile(ProfNetwork esql, String auth){
+      try{
+         boolean confirmed = false;
+	 String newPass = null;
+	 while (confirmed = false){
+	 	System.out.println("\tEnter new password: ");
+	 	newPass = in.readLine();
+	 	System.out.println("\tConfirm password: ");
+	 	String confirmPass = in.readLine();
+		if (newPass == confirmPass){
+			confirmed = true;
+		}
+		}
+
+         String query = String.format("UPDATE USR "
+					+ "SET password = '%s' "
+					+ "WHERE userId = '%s'", newPass, auth);
+         int userNum = esql.executeQuery(query);
+         if (userNum > 0)
+                //return login;
+         return;
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return;
+       }        
     }
+
+    // NewMessage - writes a new message from one user to another
     public static void NewMessage(ProfNetwork esql){
-        
+   
     }
+
+    // SendRequest - sends a from request from one user to another
     public static void SendRequest(ProfNetwork esql){
         
     }
