@@ -1,0 +1,21 @@
+1.) Goto friend list
+select connectionId from connection_usr where userId = 'Jorge' and status ='Accept';
+
+2.) Update Profile
+update link(tablename)
+set link(column name) = link(answer),
+where userId = 'link';
+
+3.) Write a new message
+ select MAX(msgId) from message;
+
+ insert into message (msgId,senderId,receiverId,contents,sendTime,deleteStatus,status)
+ values('27812','Jorge','Dolly','Hi',TO_TIMESTAMP('2022-02-09 09:20:20', 'YYYY-MM-DD HH24:MI:SS'),'0','Sent');
+
+4.) Send Friend Request
+ select count(*) from connection_usr where userid = '<friendName>' and userid IN 
+ (select connectionid from connection_usr where userid IN 
+ (select connectionid from connection_usr where userid='Jorge'));        // I have given my name instead of the user input, if the count is greater than 0 then you can execute the next query
+                        
+ if(resultOfAboveQuery > 0)                               
+ 	insert into connection_usr values('Jorge','Dolly','Request');
