@@ -331,7 +331,7 @@ public class ProfNetwork {
     * Creates a new user with privided login, passowrd and phoneNum
     * An empty block and contact list would be generated and associated with a user
     **/
-   public static void CreateUser(Messenger esql){
+   public static void CreateUser(ProfNetwork esql){
       try{
          System.out.print("\tEnter user login: ");
          String login = in.readLine();
@@ -354,7 +354,7 @@ public class ProfNetwork {
     * Check log in credentials for an existing user
     * @return User login or null is the user does not exist
     **/
-   public static String LogIn(Messenger esql){
+   public static String LogIn(ProfNetwork esql){
       try{
          System.out.print("\tEnter user login: ");
          String login = in.readLine();
@@ -373,5 +373,16 @@ public class ProfNetwork {
    }//end
 
 // Rest of the functions definition go in here
+    public static void FriendList(ProfNetwork esql){
 
+    }
+    public static void UpdateProfile(ProfNetwork esql){
+        
+    }
+    public static void NewMessage(ProfNetwork esql){
+        
+    }
+    public static void SendRequest(ProfNetwork esql){
+        
+    }
 }//end ProfNetwork
