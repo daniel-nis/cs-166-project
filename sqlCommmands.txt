@@ -19,3 +19,5 @@ where userId = 'link';
                         
  if(resultOfAboveQuery > 0)                               
  	insert into connection_usr values('Jorge','Dolly','Request');
+
+
