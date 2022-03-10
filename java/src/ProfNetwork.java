@@ -230,13 +230,13 @@ public class ProfNetwork {
          System.err.println (
             "Usage: " +
             "java [-classpath <classpath>] " +
-            Messenger.class.getName () +
+            ProfNetwork.class.getName () +            /***changed Messenger to ProfNetwork***/
             " <dbname> <port> <user>");
          return;
       }//end if
 
       Greeting();
-      Messenger esql = null;
+      ProfNetwork esql = null;                       /* changed Messenger to ProfNetwork */
       try{
          // use postgres JDBC driver.
          Class.forName ("org.postgresql.Driver").newInstance ();
@@ -245,7 +245,7 @@ public class ProfNetwork {
          String dbname = args[0];
          String dbport = args[1];
          String user = args[2];
-         esql = new Messenger (dbname, dbport, user, "");
+         esql = new ProfNetwork (dbname, dbport, user, "");     /* changed Messenger to ProfNetwork */
 
          boolean keepon = true;
          while(keepon) {
