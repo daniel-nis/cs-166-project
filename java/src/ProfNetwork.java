@@ -271,6 +271,7 @@ public class ProfNetwork {
                 System.out.println("2. Update Profile");
                 System.out.println("3. Write a new message");
                 System.out.println("4. Send Friend Request");
+		System.out.println("5. Search Users by Name");
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
@@ -278,6 +279,7 @@ public class ProfNetwork {
                    case 2: UpdateProfile(esql, authorisedUser); break;
                    case 3: NewMessage(esql); break;
                    case 4: SendRequest(esql); break;
+		   case 5: Search(esql); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -416,4 +418,19 @@ public class ProfNetwork {
     public static void SendRequest(ProfNetwork esql){
         
     }
+
+    public static void Search(ProfNetwork esql){
+      try{
+         System.out.print("\tEnter a name to search: ");
+         String name = in.readLine();
+
+         String query = String.format("SELECT * FROM USR U WHERE U.name = '%s'", name);
+         int userNum = esql.executeQueryAndPrintResult(query);
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return;
+      }
+    }
+
+
 }//end ProfNetwork
