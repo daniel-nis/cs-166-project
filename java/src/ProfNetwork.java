@@ -272,6 +272,8 @@ public class ProfNetwork {
                 System.out.println("3. Write a new message");
                 System.out.println("4. Send Friend Request");
 		System.out.println("5. Search Users by Name");
+		System.out.println("6. View Message Inbox");
+		System.out.println("7. View Incoming Requests");
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
@@ -280,6 +282,8 @@ public class ProfNetwork {
                    case 3: NewMessage(esql); break;
                    case 4: SendRequest(esql); break;
 		   case 5: Search(esql); break;
+		   case 6: ViewMessages(esql, authorisedUser); break;
+		   case 7: IncomingRequests(esql, authorisedUser); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -426,6 +430,61 @@ public class ProfNetwork {
 
          String query = String.format("SELECT * FROM USR U WHERE U.name = '%s'", name);
          int userNum = esql.executeQueryAndPrintResult(query);
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return;
+      }
+    }
+
+    public static void ViewMessages(ProfNetwork esql, String auth){
+      try{
+         System.out.print("\tMessages in inbox: ");
+
+         String query = String.format("SELECT M.contents FROM Message M WHERE M.receiverid = '%s'", auth);
+         int userNum = esql.executeQueryAndPrintResult(query);
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return;
+      }
+    }
+
+    public static void IncomingRequests(ProfNetwork esql, String auth){
+      try{
+        System.out.print("\tIncoming Requests: ");
+
+        String query = String.format("SELECT C.connectionid FROM Connection_USR C WHERE C.userid = '%s' AND C.status = 'Request'", auth);
+        int userNum = esql.executeQueryAndPrintResult(query);
+
+	System.out.println("\tEnter a connection id to accept/reject their request status: ");
+        String connect = in.readLine();
+		// todo: add lookup to check whether input is valid
+        String stat = "Request";
+        boolean select = true;
+        while(select){
+                System.out.printf("\n\tFor %s, would you like to accept or reject their request?", connect);
+                System.out.println("\n\t1. Accept ");
+                System.out.println("\t2. Reject ");
+                System.out.println("\n\t9. Cancel ");
+
+                switch(readChoice()){
+                        case 1:
+				String accQuery = String.format("UPDATE Connection_usr SET status = 'Accept' WHERE userid = '%s' AND connectionid = '%s'", auth, connect);
+				esql.executeQuery(accQuery);
+				select = false;
+				break;
+                        case 2:
+				String rejQuery = String.format("UPDATE Connection_usr SET status = 'Reject' WHERE userid = '%s' AND connectionid = '%s'", auth, connect);
+				esql.executeQuery(rejQuery);
+				select = false;
+				break;
+                        case 9:
+				select = false;
+				break;
+			default:
+				System.out.println("\tYour choice is not recognized");
+				break;
+                }
+        }
       }catch(Exception e){
          System.err.println (e.getMessage ());
          return;
