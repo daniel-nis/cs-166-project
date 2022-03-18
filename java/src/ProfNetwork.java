@@ -428,8 +428,13 @@ public class ProfNetwork {
          System.out.print("\tEnter a name to search: ");
          String name = in.readLine();
 
-         String query = String.format("SELECT * FROM USR U WHERE U.name = '%s'", name);
+         String query = String.format("SELECT U.userid, U.name FROM USR U WHERE U.name = '%s'", name);
+         //String query = String.format("SELECT * FROM USR U WHERE U.name LIKE %'%s'%", name);
          int userNum = esql.executeQueryAndPrintResult(query);
+	 if (userNum <= 0){
+	    System.out.printf("\nNo results for: %s\n", name);
+	    return;
+	 }
       }catch(Exception e){
          System.err.println (e.getMessage ());
          return;
@@ -438,10 +443,98 @@ public class ProfNetwork {
 
     public static void ViewMessages(ProfNetwork esql, String auth){
       try{
-         System.out.print("\tMessages in inbox: ");
+	 boolean select = true;
+ 	 while(select){
+	    System.out.println("1. View Messages in Inbox ");
+	    System.out.println("2. View Sent Messages");
+	    System.out.println("3. Write a New Message");
+	    System.out.println("9. Cancel");
 
-         String query = String.format("SELECT M.contents FROM Message M WHERE M.receiverid = '%s'", auth);
-         int userNum = esql.executeQueryAndPrintResult(query);
+	    switch(readChoice()){
+		case 1:
+		   System.out.print("\n\tMessages in inbox: \n");
+         	   String query = String.format("SELECT M.msgid, M.senderid, M.contents FROM Message M WHERE M.receiverid = '%s' AND (M.deleteStatus = 0 OR M.deleteStatus = 2)", auth);
+          	   esql.executeQueryAndPrintResult(query);
+		   DeleteMessage(esql, auth, "rec");
+		   select = false;
+		   break;
+                case 2:
+                   System.out.print("\n\tMessages you've sent: \n");
+                   String query2 = String.format("SELECT M.msgid, M.receiverid, M.contents FROM Message M WHERE M.senderid = '%s' AND (M.deleteStatus = 0 OR M.deleteStatus = 1)", auth);
+		   esql.executeQueryAndPrintResult(query2);
+		   DeleteMessage(esql, auth, "sender");
+		   select = false;
+                   break;
+                case 3:
+                   System.out.println("See");
+                   break;
+                case 9:
+                   System.out.println("Cancel");
+		   select = false;
+                   break;
+	    }
+	 }
+         
+	//System.out.print("\tMessages in inbox: \n");
+
+         //String query = String.format("SELECT M.msgid, M.senderid, M.contents FROM Message M WHERE M.receiverid = '%s'", auth);
+         //int userNum = esql.executeQueryAndPrintResult(query);
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return;
+      }
+    }
+    
+    public static void DeleteMessage(ProfNetwork esql, String auth, String who){
+      try{
+	 boolean select = true;
+	 while(select){
+	    System.out.println("Would you like to delete a message?");
+	    System.out.println("1. Delete a message");
+	    System.out.println("2. Return to Main Menu");
+	    switch(readChoice()){
+		case 1:
+		   System.out.print("\tEnter the Message ID which you want to delete: \n");
+         	   String delMsg = in.readLine();
+		   String query = String.format("SELECT M.deleteStatus FROM MESSAGE M WHERE M.msgid = '%s'", delMsg);
+                   List<List<String>> status = new ArrayList<List<String>>(esql.executeQueryAndReturnResult(query));
+		   if(who == "sender") {
+			if(Integer.parseInt(status.get(0).get(0)) == 0){         // 0 = nobody deleted
+                           String query0 = String.format("UPDATE Message SET deleteStatus = 2 WHERE msgid = '%s'", delMsg);
+			   esql.executeUpdate(query0);
+			}
+			else if(Integer.parseInt(status.get(0).get(0)) == 1){	// 1 = receiver deleted
+			   String query1 = String.format("UPDATE Message SET deleteStatus = 3 WHERE msgid = '%s'", delMsg);
+			   esql.executeUpdate(query1);
+			}							// 2 = sender deleted
+			else {							// 3 = all deleted
+			   System.out.println("This message has already been deleted");
+			}
+		   }
+		   else {
+                        if(Integer.parseInt(status.get(0).get(0)) == 0){	// 0 = nobody deleted
+			   String query0 = String.format("UPDATE Message SET deleteStatus = 1 WHERE msgid = '%s'", delMsg);
+                           esql.executeUpdate(query0);
+			}
+                        else if(Integer.parseInt(status.get(0).get(0)) == 2){	// 2 = sender deleted
+			   String query2 = String.format("UPDATE Message SET deleteStatus = 3 WHERE msgid = '%s'", delMsg);
+                           esql.executeUpdate(query2);
+			}							// 1 = reciever deleted
+                        else {							// 3 = all deleted
+                           System.out.println("This message has already been deleted");
+                        }
+                   }
+		   break;		   
+		case 2:
+		   select = false;
+		   break;
+	    }
+	 }
+         //System.out.print("\tEnter the Message ID which you want to delete: \n");
+	 //String delMsg = in.readLine();
+
+         //String query = String.format("SELECT M.msgid, M.senderid, M.contents FROM Message M WHERE M.receiverid = '%s'", auth);
+         //int userNum = esql.executeQueryAndPrintResult(query);
       }catch(Exception e){
          System.err.println (e.getMessage ());
          return;
