@@ -269,12 +269,13 @@ public class ProfNetwork {
                 System.out.println("---------");
                 System.out.println("1. Goto Friend List");
                 System.out.println("2. Update Profile");
-                System.out.println("3. Write a new message");
+                System.out.println("3. Write a New Message");
                 System.out.println("4. Send Friend Request");
 		System.out.println("5. Search Users by Name");
 		System.out.println("6. View Message Inbox");
 		System.out.println("7. View Incoming Requests");
-                System.out.println(".........................");
+                System.out.println("8. View a Profile");
+                System.out.println("......... ................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
                    case 1: FriendList(esql); break;
@@ -284,7 +285,8 @@ public class ProfNetwork {
 		   case 5: Search(esql); break;
 		   case 6: ViewMessages(esql, authorisedUser); break;
 		   case 7: IncomingRequests(esql, authorisedUser); break;
-                   case 9: usermenu = false; break;
+                   case 8: ViewProfile(esql, authorisedUser); break;
+		   case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
               }
@@ -435,6 +437,53 @@ public class ProfNetwork {
 	 if (userNum <= 0){
 	    System.out.printf("\nNo results for: %s\n", name);
 	    return;
+	 }
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return;
+      }
+    }
+
+    public static void ViewProfile(ProfNetwork esql, String auth){
+      try{
+	 boolean select = true;
+	 while(select){
+	    System.out.println("1. View Your Profile ");
+            System.out.println("2. View a Friend's Profile");
+            System.out.println("9. Cancel");
+
+	    switch(readChoice()){
+		case 1:
+		   String query = String.format("SELECT U.userid, U.name, U.email, U.dateofbirth FROM USR U WHERE U.userid = '%s'", auth);
+	 	   esql.executeQueryAndPrintResult(query);
+	 	   String query1 = String.format("SELECT W.company, W.role, W.location, W.startdate, W.enddate FROM WORK_EXPR W WHERE W.userid = '%s'", auth);
+	 	   esql.executeQueryAndPrintResult(query1);
+         	   String query2 = String.format("SELECT E.instituitionname, E.major, E.degree, E.startdate, E.enddate FROM EDUCATIONAL_DETAILS E WHERE E.userid = '%s'", auth);
+         	   esql.executeQueryAndPrintResult(query2);
+		   select = false;
+		   break;
+		case 2:
+		   System.out.print("\tEnter the username for the profile you want to view: ");
+         	   String name = in.readLine();
+
+         	   /*String query3 = String.format("SELECT U.userid, U.name FROM USR U WHERE U.userid EXISTS IN (SELECT C.userid FROM Connection C WHERE C.userid EXISTS IN (SELECT U1.userid FROM User U1 WHERE U1.name LIKE %" + name + "%))");
+         	   int userNum = esql.executeQueryAndPrintResult(query3);
+         	   if (userNum <= 0){
+            	      System.out.printf("\nNo results for: %s\n", name);
+            	   return;
+         	   }*/
+		   String query3 = String.format("SELECT U.userid, U.name, U.email, U.dateofbirth FROM USR U WHERE U.userid = '%s'", name);
+                   esql.executeQueryAndPrintResult(query3);
+                   String query4 = String.format("SELECT W.company, W.role, W.location, W.startdate, W.enddate FROM WORK_EXPR W WHERE W.userid = '%s'", name);
+                   esql.executeQueryAndPrintResult(query4);
+                   String query5 = String.format("SELECT E.instituitionname, E.major, E.degree, E.startdate, E.enddate FROM EDUCATIONAL_DETAILS E WHERE E.userid = '%s'", name);
+                   esql.executeQueryAndPrintResult(query5);
+		   select = false;
+		   break;
+		case 9:
+		   select = false;
+		   break;
+	    }
 	 }
       }catch(Exception e){
          System.err.println (e.getMessage ());
