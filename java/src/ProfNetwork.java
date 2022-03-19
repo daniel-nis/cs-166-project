@@ -483,7 +483,7 @@ public class ProfNetwork {
             esql.executeUpdate(query);
             System.out.println("****** MESSAGE SENT ******");
         }else{
-            System.out.println("Not your connection cannot send messages");
+            System.out.println("Not your Friend, cannot send message");
         }
         halt();
     }
@@ -499,10 +499,10 @@ public class ProfNetwork {
         }
         String queryToCheckIfAlreadySent = String.format("Select * from connection_usr where userid = '%s' AND connectionid = '%s'", esql.authorisedUser, newConnection);
         List<List<String>> res = esql.executeQueryAndReturnResult(queryToCheckIfAlreadySent);
-//         System.out.println(res.size());
+//        System.out.println(res.size());
         if(res.size() > 0){
             System.out.println("Friend Request is already sent");
-            System.out.format("Status of friend request to %s is %s \n", newConnection, res.get(res.size()-1).get(2));
+            System.out.format("Status of friend request to %s is %s \n", newConnection, res.get(0).get(2));
             halt();
             return;
         }
@@ -513,26 +513,25 @@ public class ProfNetwork {
             String query = String.format("insert into connection_usr values('%s','%s','Request')", esql.authorisedUser, newConnection);
             esql.executeUpdate(query);
             System.out.println("****** FRIEND REQUEST SENT ******");
-            halt();
-            return;
-        }
-        String queryToCheckIfCanSend = String.format("select count(*) from connection_usr where userid = '%s' and userid IN " +
-                "(select connectionid from connection_usr where userid IN " +
-                "(select connectionid from connection_usr where userid='%s'))", newConnection, esql.authorisedUser);
-        int check3 = esql.executeQuery(queryToCheckIfCanSend);
-        if(check3 > 0){
-            //Send Request
-            String query = String.format("insert into connection_usr values('%s','%s','Request')", esql.authorisedUser, newConnection);
-            esql.executeUpdate(query);
-            System.out.println("****** FRIEND REQUEST SENT ******");
-        }else{
-            System.out.println("Cannot Send Request");
+        } else {
+            String queryToCheckIfCanSend = String.format("select count(*) from connection_usr where userid = '%s' and userid IN " +
+                    "(select connectionid from connection_usr where userid IN " +
+                    "(select connectionid from connection_usr where userid='%s'))", newConnection, esql.authorisedUser);
+            int check3 = esql.executeQuery(queryToCheckIfCanSend);
+            if(check3 > 0) {
+                //Send Request
+                String query = String.format("insert into connection_usr values('%s','%s','Request')", esql.authorisedUser, newConnection);
+                esql.executeUpdate(query);
+                System.out.println("****** FRIEND REQUEST SENT ******");
+            } else {
+                System.out.println("Cannot Send Request");
+            }
         }
         halt();
     }
     public static void halt() throws Exception{
         System.out.println("Press any key to continue");
-        in.readLine();
+        in.read();
     }
 
     public static void Search(ProfNetwork esql){
@@ -741,4 +740,4 @@ public class ProfNetwork {
 
 
 
-}//end ProfNetwor
+}//end ProfNetwork
