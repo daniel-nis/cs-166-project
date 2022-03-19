@@ -347,7 +347,8 @@ public class ProfNetwork {
          String email = in.readLine();
 
 	 //Creating empty contact\block lists for a user
-	 String query = String.format("INSERT INTO USR (userId, password, email, contact_list) VALUES ('%s','%s','%s')", login, password, email);
+	 //String query = String.format("INSERT INTO USR (userId, password, email, contact_list) VALUES ('%s','%s','%s')", login, password, email);
+	 String query = String.format("INSERT INTO USR (userId, password, email) VALUES ('%s','%s','%s')", login, password, email);
 
          esql.executeUpdate(query);
          System.out.println ("User successfully created!");
@@ -429,7 +430,7 @@ public class ProfNetwork {
          String name = in.readLine();
 
          String query = String.format("SELECT U.userid, U.name FROM USR U WHERE U.name = '%s'", name);
-         //String query = String.format("SELECT * FROM USR U WHERE U.name LIKE %'%s'%", name);
+         //String query = String.format("SELECT U.userid, U.name FROM USR U WHERE U.userid EXISTS IN (SELECT C.userid FROM Connection C WHERE C.userid EXISTS IN (SELECT U1.userid FROM User U1 WHERE U1.name LIKE %" + name + "%))");
          int userNum = esql.executeQueryAndPrintResult(query);
 	 if (userNum <= 0){
 	    System.out.printf("\nNo results for: %s\n", name);
