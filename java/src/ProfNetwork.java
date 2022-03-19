@@ -499,7 +499,7 @@ public class ProfNetwork {
         }
         String queryToCheckIfAlreadySent = String.format("Select * from connection_usr where userid = '%s' AND connectionid = '%s'", esql.authorisedUser, newConnection);
         List<List<String>> res = esql.executeQueryAndReturnResult(queryToCheckIfAlreadySent);
-        System.out.println(res.size());
+//         System.out.println(res.size());
         if(res.size() > 0){
             System.out.println("Friend Request is already sent");
             System.out.format("Status of friend request to %s is %s \n", newConnection, res.get(res.size()-1).get(2));
